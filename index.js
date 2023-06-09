@@ -27,9 +27,16 @@ async function run() {
     await client.connect();
 
     const classCollection = client.db("lanGuageDB").collection("Classes");
+    const instactorCollection = client.db("lanGuageDB").collection("instactor");
 
     app.get("/Classes", async (req, res) => {
       const result = await classCollection.find().toArray();
+      res.send(result);
+    });
+    
+
+    app.get("/instactor", async (req, res) => {
+      const result = await instactorCollection.find().toArray();
       res.send(result);
     });
 

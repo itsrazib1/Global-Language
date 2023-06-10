@@ -41,7 +41,7 @@ async function run() {
       res.send(result);
     });
 
-    app.post('/Studentclass', async (req, res) => {
+    app.post("/Studentclass", async (req, res) => {
       const item = {
         image: req.body.image,
         name: req.body.name,
@@ -49,7 +49,7 @@ async function run() {
         availableSeats: req.body.availableSeats,
         price: req.body.price,
       };
-    
+
       try {
         const result = await StudentclassCollection.insertOne(item);
         console.log("Inserted student class:", result);
@@ -57,6 +57,18 @@ async function run() {
       } catch (error) {
         console.error("Error inserting student class:", error);
         res.status(500).json({ error: "Failed to insert student class" });
+      }
+    });
+
+    app.delete("/Studentclass/:id", async (req, res) => {
+      const classId = req.params.id;
+      try {
+        const result = await StudentclassCollection.deleteOne({ _id: classId });
+        console.log("Deleted student class:", result);
+        res.status(200).json(result);
+      } catch (error) {
+        console.error("Error deleting student class:", error);
+        res.status(500).json({ error: "Failed to delete student class" });
       }
     });
 

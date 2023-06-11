@@ -31,6 +31,12 @@ async function run() {
 
     app.post("/users", async (req, res) => {
       const user = req.body;
+      const query = {email: user.email}
+      const existingUser = await usersCollection.findOne(query);
+      console.log('existingUser',existingUser);
+      if(existingUser){
+        return res.send({message:'User Alredy Exists'})
+      }
       const reselt = await usersCollection.insertOne(user)
       res.send(reselt)
     });
@@ -38,6 +44,34 @@ async function run() {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
+
+    app.patch('/users/admin/:id',async (req,res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc ={
+        $set: {
+          role: 'admin'
+        },
+      };
+      const result = await usersCollection.updateOne(filter,updateDoc);
+      res.send(result)
+    });
+
+
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      try {
+        const result = await usersCollection.deleteOne(query);
+        console.log("Deleted student class:", result);
+        res.status(200).json(result);
+      } catch (error) {
+        console.error("Error deleting student class:", error);
+        res.status(500).json({ error: "Failed to delete student class" });
+      }
+    });
+
+
 
     app.get("/Classes", async (req, res) => {
       const result = await classCollection.find().toArray();

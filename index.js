@@ -136,7 +136,7 @@ app.post('/jwt',(req,res) =>{
       const result = await instactorCollection.find().toArray();
       res.send(result);
     });
-
+   
     app.get("/Studentclass", async (req, res) => {
       const result = await StudentclassCollection.find().toArray();
       res.send(result);

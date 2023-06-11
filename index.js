@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.4hmio3i.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
@@ -24,7 +24,20 @@ async function run() {
 
     const classCollection = client.db("lanGuageDB").collection("Classes");
     const instactorCollection = client.db("lanGuageDB").collection("instactor");
-    const StudentclassCollection = client.db("lanGuageDB").collection("Studentclass");
+    const usersCollection = client.db("lanGuageDB").collection("users");
+    const StudentclassCollection = client
+      .db("lanGuageDB")
+      .collection("Studentclass");
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const reselt = await usersCollection.insertOne(user)
+      res.send(reselt)
+    });
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
 
     app.get("/Classes", async (req, res) => {
       const result = await classCollection.find().toArray();
@@ -61,9 +74,10 @@ async function run() {
     });
 
     app.delete("/Studentclass/:id", async (req, res) => {
-      const classId = req.params.id;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
       try {
-        const result = await StudentclassCollection.deleteOne({ _id: classId });
+        const result = await StudentclassCollection.deleteOne(query);
         console.log("Deleted student class:", result);
         res.status(200).json(result);
       } catch (error) {
@@ -73,7 +87,9 @@ async function run() {
     });
 
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // await client.close();
   }

@@ -47,14 +47,12 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const classCollection = client.db("lanGuageDB").collection("Classes");
     const instactorCollection = client.db("lanGuageDB").collection("instactor");
     const usersCollection = client.db("lanGuageDB").collection("users");
-    const StudentclassCollection = client
-      .db("lanGuageDB")
-      .collection("Studentclass");
+    const StudentclassCollection = client.db("lanGuageDB").collection("Studentclass");
 
     app.post("/users", async (req, res) => {
       const user = req.body;
